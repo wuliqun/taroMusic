@@ -39,12 +39,13 @@ export function apiGetSearchTips(keywords:string){
 }
 
 // 歌曲搜索 
-export function apiGetSearchSongs(keywords:string){
+export function apiGetSearchSongs(keywords:string,offset:number = 0){
   return request({
     url:'/search',
     data:{
       keywords,
-      type:1
+      type:1,
+      offset
     }
   })
 }

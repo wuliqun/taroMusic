@@ -16,8 +16,6 @@ export default class Index extends Component<any, IndexState> {
     this.state = {
       topList: []
     }
-  }
-  componentWillMount() {
     this.getTopList()
   }
   getTopList() {
@@ -46,10 +44,10 @@ export default class Index extends Component<any, IndexState> {
     let songs: JSX.Element[] | null = null;
     if (playlist.tracks) {
       songs = playlist.tracks.slice(0, 3).map((song, index) => {
-        return (<div className="song f-thide">{index + 1}.{song.name} - {song.ar.map(ar => ar.name).join('/')}</div>)
+        return (<div className="song f-thide" key={song.id}>{index + 1}.{song.name} - {song.ar.map(ar => ar.name).join('/')}</div>)
       })
     }
-    return (<div className="list-item">
+    return (<div className="list-item" key={playlist.id}>
       <div className="img" style={bgImg}>
         <div className="name">{playlist.name}</div>
         <div className="update">{playlist.updateFrequency}</div>
