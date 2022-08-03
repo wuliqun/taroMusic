@@ -15,6 +15,8 @@ interface SearchState {
   scrollHeight: number
 }
 
+const title = 'MOCK - 网易云音乐';
+import WXHeader from 'CMT/header/header';
 const SEARCH_HISTORY_STORAGE_KEY = 'SEARCH_HISTORY';
 
 export default class Search extends Component<any, SearchState> {
@@ -30,7 +32,7 @@ export default class Search extends Component<any, SearchState> {
       searchType: 0,
       finished: false,
       scrollHeight: 500,
-      history: JSON.parse(localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY) || '[]')
+      history: JSON.parse(Taro.getStorageSync(SEARCH_HISTORY_STORAGE_KEY) || '[]')
     }
     this.input = createRef<HTMLInputElement>();
     this.getHotSearch();
@@ -105,7 +107,7 @@ export default class Search extends Component<any, SearchState> {
     this.setState({
       history
     })
-    localStorage.setItem(SEARCH_HISTORY_STORAGE_KEY, JSON.stringify(history));
+    Taro.setStorageSync(SEARCH_HISTORY_STORAGE_KEY, JSON.stringify(history));
   }
   submitSearch(keyword: string) {
     this.handleHistory('ADD', keyword);
@@ -289,6 +291,7 @@ export default class Search extends Component<any, SearchState> {
   render() {
     return (
       <div className="p-search">
+        <WXHeader title={ title }></WXHeader>
         <div className="search-wrapper">
           <div className="m-search">
             <div className="content">

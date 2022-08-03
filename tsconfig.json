@@ -25,7 +25,7 @@
       "IMG/*":["./src/img/*"],
       "API/*":["./src/api/*"],
       "CMT/*":["./src/components/*"],
-      "UTILS/*":["./utils/*"]
+      "UTILS/*":["./utils/*"],
     }
   },
   "include": ["./src", "./types","./utils"],
