@@ -13,15 +13,18 @@ interface IndexState {
 const count = 4;
 const title = 'MOCK - 网易云音乐';
 
+const INDEX_DATA_STORAGE_KEY = 'INDEX_PLAYLIST';
+
 export default class Index extends Component<any, IndexState> {
   constructor(props) {
     super(props);
     this.state = {
-      topList: []
+      topList: JSON.parse(Taro.getStorageSync(INDEX_DATA_STORAGE_KEY) || '[]')
     }
     this.getTopList()
   }
   getTopList() {
+    if(this.state.topList.length === 4) return;
     apiGetToplist().then(res => {
       this.setState({
         topList: res.list.slice(0, count)
@@ -38,7 +41,9 @@ export default class Index extends Component<any, IndexState> {
       this.setState({
         topList: topList
       });
+      Taro.setStorageSync(INDEX_DATA_STORAGE_KEY,JSON.stringify(topList))
     })
+    
   }
   gotoPlaylist(playlist){
     setPlaylist(playlist);
