@@ -4,13 +4,14 @@ import Taro from '@tarojs/taro';
 import './index.scss'
 import { apiGetToplist, apiGetPlaylistDetail } from 'API/index'
 import {setPlaylist} from '../../ts/shared';
+import WXHeader from 'CMT/header/header';
+
 interface IndexState {
   topList: any[]
 }
 // 展示热榜歌单数量
 const count = 4;
 const title = 'MOCK - 网易云音乐';
-import WXHeader from 'CMT/header/header';
 
 export default class Index extends Component<any, IndexState> {
   constructor(props) {
@@ -69,7 +70,7 @@ export default class Index extends Component<any, IndexState> {
   render() {
     return (
       <div className='p-index'>
-        <WXHeader title={ title }></WXHeader>
+        <WXHeader title={ title } isIndex></WXHeader>
         <div className="m-search" onClick={() => {
           Taro.navigateTo({
             url: '/pages/search/search'

@@ -2,8 +2,8 @@ const apiConfig: {
   [k: string]: { apiUrl: string }
 } = {
   development: {
-    // apiUrl: "https://www.mu3c.xyz/api/"
-    apiUrl: "http://www.mu3c.xyz:3000/"
+    apiUrl: "https://www.mu3c.xyz/api/"
+    // apiUrl: "http://www.mu3c.xyz:3000/"
   },
   production: {
     apiUrl: "https://www.mu3c.xyz/api/"

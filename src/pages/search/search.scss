@@ -1,7 +1,7 @@
 .p-search {
 
   .search-wrapper {
-    height: 150px;
+    height: 140px;
   }
 
   .m-search {
@@ -9,8 +9,8 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 150px;
-    padding-top: 40px;
+    height: 140px;
+    padding-top: 30px;
     box-sizing: border-box;
     background-color: #fff;
 
@@ -180,9 +180,9 @@
 
   // 搜索结果
   .search-result {
-    margin: 0 30px;
 
     .song-item {
+      padding:0 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;

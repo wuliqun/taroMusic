@@ -2,6 +2,7 @@ import { Component, createRef, RefObject } from 'react'
 import { ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro';
 import { apiGetHotSearch, apiGetSearchTips, apiGetSearchSongs } from 'API/index';
+import WXHeader from 'CMT/header/header';
 import './search.scss'
 
 interface SearchState {
@@ -12,11 +13,11 @@ interface SearchState {
   songs: any[],
   searchType: 0 | 1 | 2, // 0 默认 1 搜索中 2 搜索完成
   finished: boolean,
-  scrollHeight: number
+  scrollHeight: number,
+  headerHeight:number
 }
 
 const title = 'MOCK - 网易云音乐';
-import WXHeader from 'CMT/header/header';
 const SEARCH_HISTORY_STORAGE_KEY = 'SEARCH_HISTORY';
 
 export default class Search extends Component<any, SearchState> {
@@ -32,6 +33,7 @@ export default class Search extends Component<any, SearchState> {
       searchType: 0,
       finished: false,
       scrollHeight: 500,
+      headerHeight:0,
       history: JSON.parse(Taro.getStorageSync(SEARCH_HISTORY_STORAGE_KEY) || '[]')
     }
     this.input = createRef<HTMLInputElement>();
@@ -41,7 +43,9 @@ export default class Search extends Component<any, SearchState> {
   componentDidMount() {
     this.focus();
 
-    this.getResultScrollHeight();
+    setTimeout(() => {
+      this.getResultScrollHeight();
+    }, 50);
   }
   // 获取交点
   focus() {
@@ -51,10 +55,14 @@ export default class Search extends Component<any, SearchState> {
   getResultScrollHeight() {
     // getCompRectByClassName
     const { windowHeight } = Taro.getSystemInfoSync()
-    Taro.createSelectorQuery().select('.m-search').boundingClientRect(rec => {
-      this.setState({
-        scrollHeight: windowHeight - rec.height
-      })
+    Taro.createSelectorQuery().select('.wx-header').boundingClientRect(rec => {
+      let hh = rec.height;
+      Taro.createSelectorQuery().select('.m-search').boundingClientRect(rec => {
+        this.setState({
+          scrollHeight: windowHeight - rec.height - hh,
+          headerHeight:hh
+        })
+      }).exec();
     }).exec();
   }
   clear() {
@@ -291,9 +299,9 @@ export default class Search extends Component<any, SearchState> {
   render() {
     return (
       <div className="p-search">
-        <WXHeader title={ title }></WXHeader>
+        <WXHeader title={ title } background={'#fff'}></WXHeader>
         <div className="search-wrapper">
-          <div className="m-search">
+          <div className="m-search" style={{top:this.state.headerHeight}}>
             <div className="content">
               <div className="search-ico"></div>
               <input type="text" className='input' ref={this.input} value={this.state.searchTxt}

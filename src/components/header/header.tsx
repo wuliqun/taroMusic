@@ -8,25 +8,31 @@ interface HeaderProps {
   isIndex?: boolean,
   background?: string,
   title: string,
-  theme?: 'light' | 'dark'
+  theme?: 'light' | 'dark',
 }
 
 
 class WXHeader extends Component<HeaderProps>{
   rect: Taro.getMenuButtonBoundingClientRect.Rect;
+  unSupport: boolean = false;
   constructor(props: HeaderProps) {
     super(props)
     const { windowWidth } = Taro.getSystemInfoSync()
-    console.log(Taro.getSystemInfoSync())
-    this.rect = Taro.getMenuButtonBoundingClientRect();
-    this.rect.right = windowWidth - this.rect.right;
+    const rect:any = Taro.getMenuButtonBoundingClientRect();
+    if(typeof rect.catch === 'function'){
+      this.unSupport = true;
+    }else{
+      rect.right = windowWidth - rect.right;
+      this.rect = rect;
+    }
   }
   render() {
+    if (this.unSupport || !this.rect?.height) return null;
     const wrapperStyle = {
       paddingTop: this.rect.top,
       paddingLeft: this.rect.right,
       paddingRight: this.rect.right,
-      paddingBottom: this.rect.right + 10,
+      paddingBottom: this.rect.right,
       height: this.rect.height
     }
     const headerStyle = {
@@ -35,7 +41,7 @@ class WXHeader extends Component<HeaderProps>{
       paddingLeft: this.rect.right,
       paddingRight: this.rect.right,
       paddingBottom: this.rect.right + 10,
-      height: this.rect.height + this.rect.right + this.rect.top + 10
+      height: this.rect.height + this.rect.right + this.rect.top
     }
     const capsuleStyle = {
       top: this.rect.top,
@@ -50,8 +56,8 @@ class WXHeader extends Component<HeaderProps>{
     }
     return (
       <div className="wx-header-wrapper" style={wrapperStyle}>
-        <div className="wx-header" style={headerStyle}>
-          {!this.props.isIndex ? (<div className={"capsule" + (this.props.theme === 'dark' ? ' dark' : '')} style={capsuleStyle}>
+        <div className={"wx-header" + (this.props.theme === 'dark' ? ' dark' : '')} style={headerStyle}>
+          {!this.props.isIndex ? (<div className="capsule" style={capsuleStyle}>
             <div className="icon-wrapper" onClick={() => Taro.navigateBack()}>
               <div className="icon back" style={iconRect} ></div>
             </div>

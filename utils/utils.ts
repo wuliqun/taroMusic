@@ -57,9 +57,18 @@ function blurImage(url:string,blur:string="40x20"):string{
   return hostPath + search + tail;
 }
 
-
+function formatNum(num:number):string{
+  let res = '' + num;
+  if(num >= 100000000){
+    res = String(num / 100000000).slice(0,4) + '亿'      
+  }else if(num >= 10000){
+    res = String(num / 10000).slice(0,4) + '万'  
+  }
+  return res;
+}
 export {
   getQueryString,
   updateUrlQuery,
-  blurImage
+  blurImage,
+  formatNum
 }

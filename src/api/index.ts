@@ -49,3 +49,13 @@ export function apiGetSearchSongs(keywords:string,offset:number = 0){
     }
   })
 }
+
+// 获取用户信息
+export function apiGetUserInfo(uid){
+  return request({
+    url:'/user/detail',
+    data:{
+      uid
+    }
+  })
+}
