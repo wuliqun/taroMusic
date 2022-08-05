@@ -9,6 +9,7 @@ interface HeaderProps {
   background?: string,
   title: string,
   theme?: 'light' | 'dark',
+  barHeight?:(height:number)=>void
 }
 
 
@@ -20,11 +21,20 @@ class WXHeader extends Component<HeaderProps>{
     const { windowWidth } = Taro.getSystemInfoSync()
     const rect:any = Taro.getMenuButtonBoundingClientRect();
     if(typeof rect.catch === 'function'){
+      rect.catch(err=>{});
       this.unSupport = true;
     }else{
       rect.right = windowWidth - rect.right;
       this.rect = rect;
     }
+  }
+  componentDidMount(){
+    // render(){ return null } 同样会触发
+    Taro.createSelectorQuery().select('.wx-header').boundingClientRect().exec(([rec]) => {
+      if(this.props.barHeight){
+        this.props.barHeight(rec ? rec.height : 0);
+      }
+    });
   }
   render() {
     if (this.unSupport || !this.rect?.height) return null;

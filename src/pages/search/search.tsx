@@ -1,5 +1,5 @@
 import { Component, createRef, RefObject } from 'react'
-import { ScrollView } from '@tarojs/components'
+import { Input, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro';
 import { apiGetHotSearch, apiGetSearchTips, apiGetSearchSongs } from 'API/index';
 import WXHeader from 'CMT/header/header';
@@ -14,7 +14,8 @@ interface SearchState {
   searchType: 0 | 1 | 2, // 0 默认 1 搜索中 2 搜索完成
   finished: boolean,
   scrollHeight: number,
-  headerHeight:number
+  headerHeight: number,
+  inputFocus:boolean
 }
 
 const title = 'MOCK - 网易云音乐';
@@ -33,41 +34,28 @@ export default class Search extends Component<any, SearchState> {
       searchType: 0,
       finished: false,
       scrollHeight: 500,
-      headerHeight:0,
+      headerHeight: 0,
+      inputFocus:true,
       history: JSON.parse(Taro.getStorageSync(SEARCH_HISTORY_STORAGE_KEY) || '[]')
     }
     this.input = createRef<HTMLInputElement>();
     this.getHotSearch();
   }
 
-  componentDidMount() {
-    this.focus();
-
-    setTimeout(() => {
-      this.getResultScrollHeight();
-    }, 50);
-  }
-  // 获取交点
-  focus() {
-    this.input.current?.focus();
-  }
-  // 获取结果列表滚动高度
-  getResultScrollHeight() {
-    // getCompRectByClassName
+  // 获取到头部高度
+  // 计算出scrollHeight
+  receiveBarHeight(height){
     const { windowHeight } = Taro.getSystemInfoSync()
-    Taro.createSelectorQuery().select('.wx-header').boundingClientRect(rec => {
-      let hh = rec.height;
-      Taro.createSelectorQuery().select('.m-search').boundingClientRect(rec => {
-        this.setState({
-          scrollHeight: windowHeight - rec.height - hh,
-          headerHeight:hh
-        })
-      }).exec();
-    }).exec();
+    Taro.createSelectorQuery().select('.m-search').boundingClientRect().exec(([rec]) => {
+      this.setState({
+        scrollHeight: windowHeight - rec.height - height,
+        headerHeight: height
+      })
+    });
   }
   clear() {
     // 搜索中  阻止清空
-    if(this.state.searchType === 1) return ;
+    if (this.state.searchType === 1) return;
     this.setState({
       searchTxt: '',
       searchTips: [],
@@ -134,7 +122,7 @@ export default class Search extends Component<any, SearchState> {
       let songIds = songs.map(s => s.id);
       apiGetSearchSongs(keyword, songs.length).then(res => {
         // 状态已变更, 丢弃结果
-        if(this.state.searchType !== 1) return ;
+        if (this.state.searchType !== 1) return;
 
         if (res.result.songs) {
           songs = songs.concat(res.result.songs.filter(song => songIds.indexOf(song.id) === -1))
@@ -299,13 +287,13 @@ export default class Search extends Component<any, SearchState> {
   render() {
     return (
       <div className="p-search">
-        <WXHeader title={ title } background={'#fff'}></WXHeader>
+        <WXHeader title={title} background={'#fff'} barHeight={(height)=>{this.receiveBarHeight(height)}}></WXHeader>
         <div className="search-wrapper">
-          <div className="m-search" style={{top:this.state.headerHeight}}>
+          <div className="m-search" style={{ top: this.state.headerHeight }}>
             <div className="content">
               <div className="search-ico"></div>
-              <input type="text" className='input' ref={this.input} value={this.state.searchTxt}
-                onChange={(e) => this.handleChange(e.target.value)} placeholder='搜索歌曲' onSubmit={() => this.submitSearch(this.state.searchTxt)} />
+              <Input type="text" className='input' focus={this.state.inputFocus} value={this.state.searchTxt}
+                onInput={(e) => this.handleChange(e.detail.value)} placeholder='搜索歌曲' onBlur={()=>{this.setState({inputFocus:false})}} onFocus={()=>this.setState({inputFocus:true})} onConfirm={(e)=>this.submitSearch(e.detail.value)} />
               {this.state.searchTxt ? (
                 <div className="clear" onClick={() => this.clear()}></div>
               ) : null}

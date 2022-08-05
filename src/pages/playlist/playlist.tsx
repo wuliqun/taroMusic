@@ -33,29 +33,21 @@ export default class Playlist extends Component<any, PlaylistState> {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.getHeaderHeight();
-      this.getTitleTop();
-    }, 50);
+    this.getTitleTop();
   }
-  onPageScroll(e){
+  onPageScroll(e) {
     // this.setState({
     //   fixTitle:e.scrollTop + this.state.headerHeight > this.state.titleTop
     // })
   }
-  getHeaderHeight() {
-    Taro.createSelectorQuery().select('.wx-header').boundingClientRect(rec => {
-      this.setState({
-        headerHeight: rec.height
-      })
-    }).exec();
-  }
   getTitleTop() {
-    Taro.createSelectorQuery().select('.title-wrapper').boundingClientRect(rec => {
-      this.setState({
-        titleTop: rec.top
-      })
-    }).exec();
+    Taro.createSelectorQuery().select('.title-wrapper').boundingClientRect().exec(
+      ([rec]) => {
+        rec && this.setState({
+          titleTop: rec.top
+        })
+      }
+    );
   }
   getPlaylistUser() {
     apiGetUserInfo(this.state.playlist.userId).then(res => {
@@ -142,7 +134,11 @@ export default class Playlist extends Component<any, PlaylistState> {
     const bg = `center 0 / 100% 5000px no-repeat url(${this.state.playlist.coverImgUrl})`;
     return (
       <div className='p-playlist' style={{ background: bg }}>
-        <WXHeader title={title} background={bg} theme={"dark"}></WXHeader>
+        <WXHeader title={title} background={bg} theme={"dark"} barHeight={(height)=>{
+          this.setState({
+            headerHeight:height
+          })
+        }}></WXHeader>
         {this.renderPlaylist()}
         {this.renderSongs()}
       </div>

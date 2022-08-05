@@ -1,6 +1,6 @@
 const sharedState: {
   playlist?: any,
-  song?: any
+  song?: any,
 } = {};
 
 
