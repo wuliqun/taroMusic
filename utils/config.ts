@@ -35,7 +35,7 @@ const clientEnv = Taro.getEnv();
 const IS_DEBUG:boolean = devEnv === 'development';
 
 
-const APIURL:string = apiConfig[devEnv][clientEnv].apiUrl || apiConfig[devEnv]['default'].apiUrl;
+const APIURL:string = apiConfig[devEnv][clientEnv] ? apiConfig[devEnv][clientEnv].apiUrl : apiConfig[devEnv]['default'].apiUrl;
 
 export{
   IS_DEBUG,

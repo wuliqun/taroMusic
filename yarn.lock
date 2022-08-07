@@ -1506,6 +1506,14 @@
     "@babel/runtime" "^7.14.5"
     "@tarojs/runtime" "3.5.1"
 
+"@tarojs/api@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/api/-/api-3.5.2.tgz#47ec5f75490cb2f00ee77a8375fa95551f81a865"
+  integrity sha512-R4ssrW8yqANtNztclqfQY8oZaHv7EBEhhTPoCBVzqRdzCCXYlW+xB/O2qR0Jy7YJxECTTJh9XC2vf+Hgfm889Q==
+  dependencies:
+    "@babel/runtime" "^7.14.5"
+    "@tarojs/runtime" "3.5.2"
+
 "@tarojs/cli@3.5.1":
   version "3.5.1"
   resolved "https://registry.npmmirror.com/@tarojs/cli/-/cli-3.5.1.tgz#4c83cb9b62f715d09cf5f754d17a969abbe31c1b"
@@ -1550,10 +1558,10 @@
     xml2js "^0.4.19"
     xxhashjs "^0.2.2"
 
-"@tarojs/components-react@^3.5.1":
-  version "3.5.1"
-  resolved "https://registry.npmmirror.com/@tarojs/components-react/-/components-react-3.5.1.tgz#cf2550baa51e935ff30112977701d11a78c77903"
-  integrity sha512-qYn+xYAHTW8IqykVbYllj8qHmhP3PCG6zfRALuE6Cw2eY/8tKg1dthqWmrAuSOoKmRVwPccsWzkNF4toaiMPQg==
+"@tarojs/components-react@^3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/components-react/-/components-react-3.5.2.tgz#7bc44d9f88cb5c1abf18a32feeb0990c62bad070"
+  integrity sha512-btRdkzcSP9EWq/UhqldrlBqVoiiikeS7x17PvEHZcSP+tDiCvnkCsABZE6sH12X+FUtZEmiJsasGmyiZ4NpAFQ==
   dependencies:
     "@babel/runtime" "^7.14.5"
     better-scroll "^1.14.1"
@@ -1563,7 +1571,7 @@
     swiper "6.8.0"
     weui "^1.1.2"
 
-"@tarojs/components@3.5.1", "@tarojs/components@^3.5.1":
+"@tarojs/components@3.5.1":
   version "3.5.1"
   resolved "https://registry.npmmirror.com/@tarojs/components/-/components-3.5.1.tgz#9cbdede8d49376c0f636f55bd0681f2cc35d26f5"
   integrity sha512-effaac6QjmGAuNM/5OWLWCT9BcUEA4xVFPnoPg/2YvXBoWGJt3wzgVdcpmh+i3kLgeXto7PNk8PW2+qawPKo6Q==
@@ -1577,6 +1585,23 @@
     hls.js "^1.1.5"
     intersection-observer "^0.7.0"
     omit.js "^1.0.0"
+    resolve-pathname "^3.0.0"
+    swiper "6.8.0"
+    weui "^1.1.2"
+
+"@tarojs/components@^3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/components/-/components-3.5.2.tgz#fb8b2334c75f11e08dd1294b85d475335bb06908"
+  integrity sha512-qfLrxiAV6DdfwERiyq2AyrC9kCnp+69LeXUYiI52ibxKgdbToHI1Rf6A2LQrKJq281x2RV5rs3zHOYkc15isUA==
+  dependencies:
+    "@stencil/core" "~2.13.0"
+    "@stencil/sass" "1.5.2"
+    "@tarojs/router" "3.5.2"
+    "@tarojs/taro" "3.5.2"
+    better-scroll "^1.14.1"
+    classnames "^2.2.5"
+    hls.js "^1.1.5"
+    intersection-observer "^0.7.0"
     resolve-pathname "^3.0.0"
     swiper "6.8.0"
     weui "^1.1.2"
@@ -1707,6 +1732,19 @@
     query-string "^7.1.1"
     universal-router "^8.3.0"
 
+"@tarojs/router@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/router/-/router-3.5.2.tgz#0a477a684477f83049901dcba32cf55f742ebbfb"
+  integrity sha512-2yHFU8j1XfMBoM2Wfda4Nta48wIrZhQyBoomzYNtLEmoNTnVhoGbGdMyQnwbfnn6+6Q1grGamb9IYZyYlflrlQ==
+  dependencies:
+    "@tarojs/runtime" "3.5.2"
+    "@tarojs/taro" "3.5.2"
+    dingtalk-jsapi "~2.15.2"
+    history "^5.1.0"
+    mobile-detect "^1.4.2"
+    query-string "^7.1.1"
+    universal-router "^8.3.0"
+
 "@tarojs/runner-utils@3.5.1":
   version "3.5.1"
   resolved "https://registry.npmmirror.com/@tarojs/runner-utils/-/runner-utils-3.5.1.tgz#66806b95b6d5bdb399018a89f9095ab6db4bb263"
@@ -1721,6 +1759,14 @@
   integrity sha512-X2+pYulsPAYle+7+Pda4KsEjOsPCziItqha2MeoVLNzVCOqKuG79JDp3klNv+sslhTfySb1F8wTL5kI3yaSY2w==
   dependencies:
     "@tarojs/shared" "3.5.1"
+    lodash-es "4.17.21"
+
+"@tarojs/runtime@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/runtime/-/runtime-3.5.2.tgz#9748e0a867561072276332f3864f2d485a5e8dbc"
+  integrity sha512-lV5m/mxd9HfEO5OKlNzpFyUE3Liusdfrd3d4T8u4hCqoIW81KwqRc41lqp6XNvbQpUqZ6BW+6h0oZJWpG3z7JQ==
+  dependencies:
+    "@tarojs/shared" "3.5.2"
     lodash-es "4.17.21"
 
 "@tarojs/service@3.5.1":
@@ -1742,6 +1788,11 @@
   version "3.5.1"
   resolved "https://registry.npmmirror.com/@tarojs/shared/-/shared-3.5.1.tgz#63721572ed5ae5445d012bcc81f4fde0e6abf504"
   integrity sha512-fx93OSayS2tmlQ5n6WGenblO4zxzLmX7t9j7nFatYKYPvaRMt3j+OkN/GO2Ol3Pp+Roe+0gKTRQ9PDxJHoK+zA==
+
+"@tarojs/shared@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/shared/-/shared-3.5.2.tgz#0b30ba659cea5c4c9689c16fdf4ae763ba94e56b"
+  integrity sha512-D19SZgvwtFB7DxaBQsf3lP+pAtYNMZrJs448SwpcuFIBT4zh2PNc5oE6WjYuk4DgoEpgp1vj6OMJ2Sqtf+RqDQ==
 
 "@tarojs/taro-h5@3.5.1":
   version "3.5.1"
@@ -1772,6 +1823,14 @@
   dependencies:
     "@tarojs/api" "3.5.1"
     "@tarojs/runtime" "3.5.1"
+
+"@tarojs/taro@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.npmmirror.com/@tarojs/taro/-/taro-3.5.2.tgz#11373c7651effb8be0649a0e162456f393279a6d"
+  integrity sha512-bpPTz1dXN8t+PmfHnqc+edBCszgGj76n/1RkVjLoumTSHw93QJjfvym3TgdhySuJpToCrMpvcLscPjIi9nFVsA==
+  dependencies:
+    "@tarojs/api" "3.5.2"
+    "@tarojs/runtime" "3.5.2"
 
 "@tarojs/taroize@3.5.1":
   version "3.5.1"

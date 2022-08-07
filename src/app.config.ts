@@ -1,8 +1,8 @@
 export default {
   pages: [
     'pages/index/index',
-    'pages/search/search',
     'pages/song/song',
+    'pages/search/search',
     'pages/playlist/playlist',
   ],
   window: {
@@ -10,5 +10,6 @@ export default {
     navigationBarTitleText: 'WeChat',
     navigationBarTextStyle: 'black',
     navigationStyle:"custom",
-  }
+  },
+  "requiredBackgroundModes": ["audio"]
 }

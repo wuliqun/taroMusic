@@ -7,9 +7,10 @@ import './header.scss';
 interface HeaderProps {
   isIndex?: boolean,
   background?: string,
+  innerBackground?:string,
   title: string,
   theme?: 'light' | 'dark',
-  barHeight?:(height:number)=>void
+  barHeight?: (height: number) => void
 }
 
 
@@ -19,22 +20,24 @@ class WXHeader extends Component<HeaderProps>{
   constructor(props: HeaderProps) {
     super(props)
     const { windowWidth } = Taro.getSystemInfoSync()
-    const rect:any = Taro.getMenuButtonBoundingClientRect();
-    if(typeof rect.catch === 'function'){
-      rect.catch(err=>{});
+    const rect: any = Taro.getMenuButtonBoundingClientRect();
+    if (typeof rect.catch === 'function') {
+      rect.catch(err => { });
       this.unSupport = true;
-    }else{
+    } else {
       rect.right = windowWidth - rect.right;
       this.rect = rect;
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     // render(){ return null } 同样会触发
-    Taro.createSelectorQuery().select('.wx-header').boundingClientRect().exec(([rec]) => {
-      if(this.props.barHeight){
-        this.props.barHeight(rec ? rec.height : 0);
-      }
-    });
+    setTimeout(() => {
+      Taro.createSelectorQuery().select('.wx-header').boundingClientRect().exec(([rec]) => {
+        if (this.props.barHeight) {
+          this.props.barHeight(rec ? rec.height : 0);
+        }
+      });
+    }, 20);
   }
   render() {
     if (this.unSupport || !this.rect?.height) return null;
@@ -46,7 +49,7 @@ class WXHeader extends Component<HeaderProps>{
       height: this.rect.height
     }
     const headerStyle = {
-      background: this.props.background || '',
+      background:this.props.background || '',
       paddingTop: this.rect.top,
       paddingLeft: this.rect.right,
       paddingRight: this.rect.right,
@@ -54,7 +57,7 @@ class WXHeader extends Component<HeaderProps>{
       height: this.rect.height + this.rect.right + this.rect.top
     }
     const capsuleStyle = {
-      top: this.rect.top,
+      top: 0,
       left: this.rect.right,
       width: this.rect.width,
       height: this.rect.height,
@@ -67,6 +70,7 @@ class WXHeader extends Component<HeaderProps>{
     return (
       <div className="wx-header-wrapper" style={wrapperStyle}>
         <div className={"wx-header" + (this.props.theme === 'dark' ? ' dark' : '')} style={headerStyle}>
+          <div className="wx-header-content">
           {!this.props.isIndex ? (<div className="capsule" style={capsuleStyle}>
             <div className="icon-wrapper" onClick={() => Taro.navigateBack()}>
               <div className="icon back" style={iconRect} ></div>
@@ -77,6 +81,10 @@ class WXHeader extends Component<HeaderProps>{
             </div>
           </div>) : null}
           <div className="title" style={{ height: this.rect.height }}>{this.props.title}</div>
+          </div>
+          { this.props.innerBackground ? (
+            <div className="wx-header-bg" style={{background:this.props.innerBackground}}></div>
+          ) : null }
         </div>
       </div>
     )

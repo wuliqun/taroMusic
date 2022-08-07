@@ -1,9 +1,10 @@
 import { Component, createRef, RefObject } from 'react'
-import { Input, ScrollView } from '@tarojs/components'
+import { ScrollView,Input } from '@tarojs/components'
 import Taro from '@tarojs/taro';
-import { apiGetHotSearch, apiGetSearchTips, apiGetSearchSongs } from 'API/index';
+import { apiGetHotSearch, apiGetSearchTips, apiSearchSongs } from 'API/index';
 import WXHeader from 'CMT/header/header';
 import './search.scss'
+import { setSong } from '../../ts/shared';
 
 interface SearchState {
   searchTxt: string,
@@ -15,7 +16,7 @@ interface SearchState {
   finished: boolean,
   scrollHeight: number,
   headerHeight: number,
-  inputFocus:boolean
+  inputFocus: boolean
 }
 
 const title = 'MOCK - 网易云音乐';
@@ -35,7 +36,7 @@ export default class Search extends Component<any, SearchState> {
       finished: false,
       scrollHeight: 500,
       headerHeight: 0,
-      inputFocus:true,
+      inputFocus: true,
       history: JSON.parse(Taro.getStorageSync(SEARCH_HISTORY_STORAGE_KEY) || '[]')
     }
     this.input = createRef<HTMLInputElement>();
@@ -44,7 +45,7 @@ export default class Search extends Component<any, SearchState> {
 
   // 获取到头部高度
   // 计算出scrollHeight
-  receiveBarHeight(height){
+  receiveBarHeight(height) {
     const { windowHeight } = Taro.getSystemInfoSync()
     Taro.createSelectorQuery().select('.m-search').boundingClientRect().exec(([rec]) => {
       this.setState({
@@ -61,7 +62,8 @@ export default class Search extends Component<any, SearchState> {
       searchTips: [],
       songs: [],
       searchType: 0,
-      finished: false
+      finished: false,
+      inputFocus:false
     });
   }
   handleChange(v) {
@@ -106,6 +108,7 @@ export default class Search extends Component<any, SearchState> {
     Taro.setStorageSync(SEARCH_HISTORY_STORAGE_KEY, JSON.stringify(history));
   }
   submitSearch(keyword: string) {
+    if(!keyword) return;
     this.handleHistory('ADD', keyword);
     this.search(keyword)
   }
@@ -120,7 +123,7 @@ export default class Search extends Component<any, SearchState> {
     if (!this.state.finished) {
       let songs = this.state.songs;
       let songIds = songs.map(s => s.id);
-      apiGetSearchSongs(keyword, songs.length).then(res => {
+      apiSearchSongs(keyword, songs.length).then(res => {
         // 状态已变更, 丢弃结果
         if (this.state.searchType !== 1) return;
 
@@ -143,6 +146,13 @@ export default class Search extends Component<any, SearchState> {
         searchType: 2
       })
     }
+  }
+  // 点就所歌曲 跳转
+  handleSongClick(song){
+    setSong(song);
+    Taro.navigateTo({
+      url: `/pages/song/song?id=${song.id}`
+    });
   }
   getSearchTips() {
     this.setState({
@@ -186,6 +196,8 @@ export default class Search extends Component<any, SearchState> {
     }
     return null;
   }
+
+
   // 搜索结果
   renderSongs() {
     if (this.state.searchType >= 1) {
@@ -195,12 +207,12 @@ export default class Search extends Component<any, SearchState> {
         }}>
           <div className="songs">
             {this.state.songs.map(song => {
-              return (<div className="song-item" key={song.id}>
+              return (<div className="song-item" key={song.id} onClick={()=>this.handleSongClick(song)}>
                 <div className="song">
                   <div className="name f-thide">{this.renderSearchText(song.name)}</div>
                   <div className="info">
                     <div className="sq"></div>
-                    <div className="info-txt f-thide">{this.renderSearchText(song.artists.map(a => a.name).join('/') + " - " + song.album.name)}</div>
+                    <div className="info-txt f-thide">{this.renderSearchText(song.ar.map(a => a.name).join('/') + " - " + song.al.name)}</div>
                   </div>
                 </div>
                 <div className="play"></div>
@@ -287,13 +299,13 @@ export default class Search extends Component<any, SearchState> {
   render() {
     return (
       <div className="p-search">
-        <WXHeader title={title} background={'#fff'} barHeight={(height)=>{this.receiveBarHeight(height)}}></WXHeader>
+        <WXHeader title={title} background={'#fff'} barHeight={(height) => { this.receiveBarHeight(height) }}></WXHeader>
         <div className="search-wrapper">
           <div className="m-search" style={{ top: this.state.headerHeight }}>
             <div className="content">
               <div className="search-ico"></div>
               <Input type="text" className='input' focus={this.state.inputFocus} value={this.state.searchTxt}
-                onInput={(e) => this.handleChange(e.detail.value)} placeholder='搜索歌曲' onBlur={()=>{this.setState({inputFocus:false})}} onFocus={()=>this.setState({inputFocus:true})} onConfirm={(e)=>this.submitSearch(e.detail.value)} />
+                onInput={(e) => this.handleChange(e.detail.value)} placeholder='搜索歌曲' onBlur={() => { this.setState({ inputFocus: false }) }} onFocus={() => this.setState({ inputFocus: true })} onConfirm={(e) => this.submitSearch(e.detail.value)} />
               {this.state.searchTxt ? (
                 <div className="clear" onClick={() => this.clear()}></div>
               ) : null}

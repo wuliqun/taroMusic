@@ -39,8 +39,9 @@
       background-image: url(../../img/close.png);
     }
 
-    .input {
+    .weui-input,.input {
       flex: 1;
+      height:70px;
       font-size: 28px;
       color: #333;
       border: none;

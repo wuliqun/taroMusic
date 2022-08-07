@@ -1,10 +1,10 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro';
-
 import './index.scss'
 import { apiGetToplist, apiGetPlaylistDetail } from 'API/index'
 import {setPlaylist} from '../../ts/shared';
 import WXHeader from 'CMT/header/header';
+
 
 interface IndexState {
   topList: any[]

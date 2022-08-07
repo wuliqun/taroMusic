@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro';
-import { getPlaylist } from '../../ts/shared';
+import { getPlaylist,setSong } from '../../ts/shared';
 import WXHeader from 'CMT/header/header';
 
 import './playlist.scss'
@@ -57,6 +57,14 @@ export default class Playlist extends Component<any, PlaylistState> {
     })
   }
 
+  // 点就所歌曲 跳转
+  handleSongClick(song){
+    setSong(song);
+    Taro.navigateTo({
+      url: `/pages/song/song?id=${song.id}`
+    });
+  }
+
   renderSongs() {
     const { playlist, headerHeight, fixTitle } = this.state;
     let { tracks } = playlist;
@@ -81,7 +89,7 @@ export default class Playlist extends Component<any, PlaylistState> {
         <div className="song-list">
           {tracks.map((song, index) => {
             return (
-              <div className="song-item" key={song.id}>
+              <div className="song-item" key={song.id} onClick={()=>this.handleSongClick(song)}>
                 <div className="order">{index + 1}</div>
                 <div className="info">
                   <div className="name f-thide">{song.name}</div>
