@@ -25,6 +25,8 @@ const config = {
     'API':path.resolve(__dirname,'../src/api'),
     'CMT':path.resolve(__dirname,'../src/components'),
     'UTILS':path.resolve(__dirname,'../utils'),
+    'STORE':path.resolve(__dirname,'../src/store'),
+    'SLICE':path.resolve(__dirname,'../src/store/slice'),
   },
   framework: 'react',
   compiler: 'webpack5',

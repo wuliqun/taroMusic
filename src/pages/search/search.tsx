@@ -4,7 +4,8 @@ import Taro from '@tarojs/taro';
 import { apiGetHotSearch, apiGetSearchTips, apiSearchSongs } from 'API/index';
 import WXHeader from 'CMT/header/header';
 import './search.scss'
-import { setSong } from '../../ts/shared';
+import store from 'STORE/index';
+import { addPlayingList } from 'SLICE/music';
 
 interface SearchState {
   searchTxt: string,
@@ -18,6 +19,7 @@ interface SearchState {
   headerHeight: number,
   inputFocus: boolean
 }
+
 
 const title = 'MOCK - 网易云音乐';
 const SEARCH_HISTORY_STORAGE_KEY = 'SEARCH_HISTORY';
@@ -149,7 +151,7 @@ export default class Search extends Component<any, SearchState> {
   }
   // 点就所歌曲 跳转
   handleSongClick(song){
-    setSong(song);
+    store.dispatch(addPlayingList(song));
     Taro.navigateTo({
       url: `/pages/song/song?id=${song.id}`
     });

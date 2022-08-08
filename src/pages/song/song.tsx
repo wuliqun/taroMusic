@@ -2,9 +2,10 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro';
 import WXHeader from 'CMT/header/header';
 import { apiGetSongPlayUrl, apiGetSimilarSongs, apiGetHotComments, apiGetSongLyric } from 'API/index';
-import { getSong } from '../../ts/shared';
-
+import { addPlayingList,nextPlayingList } from 'SLICE/music';
+import store from 'STORE/index';
 import './song.scss'
+
 
 interface SongState {
   song: any,
@@ -24,9 +25,9 @@ export default class Song extends Component<any, SongState>{
   static backgroundAudioManager = Taro.getBackgroundAudioManager();
   constructor(props) {
     super(props);
-    const song = getSong() || JSON.parse(Taro.getStorageSync('SONG'))
+    console.log(store.getState())
+    const song = this.getCurrentSong();
     const { windowHeight } = Taro.getSystemInfoSync();
-    Song.backgroundAudioManager.stop();
     this.state = {
       song: song,
       id: Number(Taro.getCurrentInstance().router?.params.id) || song.id,
@@ -39,11 +40,18 @@ export default class Song extends Component<any, SongState>{
       activeLyricIndex: 0,
       lyricHeight: 0
     }
-    this.initPlayer();
+    this.initPlayer(song);
     this.getSimilarSongs();
     this.getHotComments();
     this.getSongLyric();
-    Taro.setStorageSync('SONG', JSON.stringify(song))
+  }
+  getCurrentSong(){
+    const state = store.getState().music;
+    return state.playingList[state.playingIndex];    
+  }
+  getIsEnded(){
+    const state = store.getState().music;
+    return state.ended;
   }
   componentDidMount() {
     setTimeout(() => {
@@ -56,8 +64,7 @@ export default class Song extends Component<any, SongState>{
       });
     }, 20);
   }
-  initPlayer() {
-    const { song } = this.state;
+  initPlayer(song) {
     Song.backgroundAudioManager.title = song.name;
     Song.backgroundAudioManager.epname = song.name;
     Song.backgroundAudioManager.singer = song.ar.map(ar => ar.name).join('/');
@@ -72,7 +79,15 @@ export default class Song extends Component<any, SongState>{
       this.togglePlay(true);
     });
     Song.backgroundAudioManager.onEnded(()=>{
-      this.togglePlay(false);
+      store.dispatch(nextPlayingList());
+      if(!this.getIsEnded){
+        this.initPlayer(this.getCurrentSong);
+        this.setState({
+          song:this.getCurrentSong()
+        })
+      }else{
+        this.togglePlay(false);
+      }
     })
     apiGetSongPlayUrl(song.id).then(url => {
       Song.backgroundAudioManager.src = url;
@@ -141,6 +156,14 @@ export default class Song extends Component<any, SongState>{
       isPlaying: flag
     })
   }
+  playNew(song){
+    store.dispatch(addPlayingList(song));
+    const newSong = this.getCurrentSong();
+    this.setState({
+      song:newSong
+    });
+    this.initPlayer(newSong);
+  }
   // disc 动画切换
   discAnimation() {
     this.timer = window.requestAnimationFrame(() => {
@@ -203,7 +226,7 @@ export default class Song extends Component<any, SongState>{
         <div className="lyric-scroller" style={lyricScrollStyle}>
           {lyrics.map((lyric, index) => {
             return (
-              <div className="line">
+              <div className="line" key={lyric.lyric + lyric.time}>
                 <div className={"line-txt" + (activeLyricIndex === index ? ' active' : '')}>{lyric.lyric}</div>
               </div>
             )
@@ -222,7 +245,7 @@ export default class Song extends Component<any, SongState>{
         <div className="similar">
           <div className="title-wrapper">
             <div className="title">喜欢这首歌的人也听</div>
-            <div className="play-all">
+            <div className="play-all" onClick={()=>this.playNew(similarSongs)}>
               <div className="icon bg-fit"></div>
               <div>一键收听</div>
             </div>
@@ -230,7 +253,7 @@ export default class Song extends Component<any, SongState>{
           <div className="similar-list">
             {similarSongs.map(song => {
               return (
-                <div className="song-item" key={song.id}>
+                <div className="song-item" key={song.id} onClick={()=>this.playNew(song)}>
                   <img className='img' src={song.album.picUrl} alt="" />
                   <div className="info">
                     <div className="name f-thide">{song.name}</div>

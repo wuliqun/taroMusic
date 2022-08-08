@@ -26,6 +26,8 @@
       "API/*":["./src/api/*"],
       "CMT/*":["./src/components/*"],
       "UTILS/*":["./utils/*"],
+      "STORE/*":["./src/store/*"],
+      "SLICE/*":["./src/store/slice/*"],
     }
   },
   "include": ["./src", "./types","./utils"],

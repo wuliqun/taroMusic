@@ -1,11 +1,13 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro';
-import { getPlaylist,setSong } from '../../ts/shared';
+import { addPlayingList } from 'SLICE/music';
 import WXHeader from 'CMT/header/header';
 
 import './playlist.scss'
 import { formatNum } from 'UTILS/utils';
 import { apiGetUserInfo } from 'API/index';
+import store from 'STORE/index';
+
 
 interface PlaylistState {
   playlist: any,
@@ -17,12 +19,11 @@ interface PlaylistState {
 }
 
 const title = '歌单';
-
 export default class Playlist extends Component<any, PlaylistState> {
   constructor(props) {
     super(props);
     this.state = {
-      playlist: getPlaylist(),
+      playlist: this.getPlaylist(),
       id: Number(Taro.getCurrentInstance().router?.params.id),
       user: null,
       headerHeight: 0,
@@ -31,7 +32,10 @@ export default class Playlist extends Component<any, PlaylistState> {
     }
     this.getPlaylistUser();
   }
-
+  getPlaylist(){
+    const state = store.getState().music;
+    return state.playlist;
+  }
   componentDidMount() {
     this.getTitleTop();
   }
@@ -58,13 +62,19 @@ export default class Playlist extends Component<any, PlaylistState> {
   }
 
   // 点就所歌曲 跳转
-  handleSongClick(song){
-    setSong(song);
+  playSong(song) {
+    store.dispatch(addPlayingList(song));
     Taro.navigateTo({
       url: `/pages/song/song?id=${song.id}`
     });
   }
-
+  // 全部播放
+  playAll(){
+    store.dispatch(addPlayingList(this.state.playlist.tracks));
+    Taro.navigateTo({
+      url: `/pages/song/song?id=${this.state.playlist.tracks[0].id}`
+    });
+  }
   renderSongs() {
     const { playlist, headerHeight, fixTitle } = this.state;
     let { tracks } = playlist;
@@ -80,7 +90,7 @@ export default class Playlist extends Component<any, PlaylistState> {
     return (
       <div className="songs">
         <div className="title-wrapper">
-          <div className="title" style={titleStyle}>
+          <div className="title" style={titleStyle} onClick={()=>this.playAll()}>
             <div className="play-icon bg-fit"></div>
             <div className="txt">播放全部</div>
             <div className="desc">（共{playlist.trackCount}首）</div>
@@ -89,7 +99,7 @@ export default class Playlist extends Component<any, PlaylistState> {
         <div className="song-list">
           {tracks.map((song, index) => {
             return (
-              <div className="song-item" key={song.id} onClick={()=>this.handleSongClick(song)}>
+              <div className="song-item" key={song.id} onClick={() => this.playSong(song)}>
                 <div className="order">{index + 1}</div>
                 <div className="info">
                   <div className="name f-thide">{song.name}</div>
@@ -142,9 +152,9 @@ export default class Playlist extends Component<any, PlaylistState> {
     const bg = `center 0 / 100% 5000px no-repeat url(${this.state.playlist.coverImgUrl})`;
     return (
       <div className='p-playlist' style={{ background: bg }}>
-        <WXHeader title={title} background={bg} theme={"dark"} barHeight={(height)=>{
+        <WXHeader title={title} background={bg} theme={"dark"} barHeight={(height) => {
           this.setState({
-            headerHeight:height
+            headerHeight: height
           })
         }}></WXHeader>
         {this.renderPlaylist()}

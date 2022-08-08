@@ -2,8 +2,9 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro';
 import './index.scss'
 import { apiGetToplist, apiGetPlaylistDetail } from 'API/index'
-import {setPlaylist} from '../../ts/shared';
 import WXHeader from 'CMT/header/header';
+import store from 'STORE/index';
+import { setPlaylist } from 'SLICE/music';
 
 
 interface IndexState {
@@ -14,7 +15,6 @@ const count = 4;
 const title = 'MOCK - 网易云音乐';
 
 const INDEX_DATA_STORAGE_KEY = 'INDEX_PLAYLIST';
-
 export default class Index extends Component<any, IndexState> {
   constructor(props) {
     super(props);
@@ -46,7 +46,7 @@ export default class Index extends Component<any, IndexState> {
     
   }
   gotoPlaylist(playlist){
-    setPlaylist(playlist);
+    store.dispatch(setPlaylist({payload:playlist}));
     Taro.navigateTo({
       url: `/pages/playlist/playlist?id=${playlist.id}`
     });
