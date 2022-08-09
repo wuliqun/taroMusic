@@ -2,7 +2,7 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro';
 import WXHeader from 'CMT/header/header';
 import { apiGetSongPlayUrl, apiGetSimilarSongs, apiGetHotComments, apiGetSongLyric } from 'API/index';
-import { addPlayingList,nextPlayingList } from 'SLICE/music';
+import { addPlayingList, nextPlayingList } from 'SLICE/music';
 import store from 'STORE/index';
 import './song.scss'
 
@@ -25,7 +25,6 @@ export default class Song extends Component<any, SongState>{
   static backgroundAudioManager = Taro.getBackgroundAudioManager();
   constructor(props) {
     super(props);
-    console.log(store.getState())
     const song = this.getCurrentSong();
     const { windowHeight } = Taro.getSystemInfoSync();
     this.state = {
@@ -41,15 +40,13 @@ export default class Song extends Component<any, SongState>{
       lyricHeight: 0
     }
     this.initPlayer(song);
-    this.getSimilarSongs();
-    this.getHotComments();
-    this.getSongLyric();
+    this.initEvent();
   }
-  getCurrentSong(){
+  getCurrentSong() {
     const state = store.getState().music;
-    return state.playingList[state.playingIndex];    
+    return state.playingList[state.playingIndex];
   }
-  getIsEnded(){
+  getIsEnded() {
     const state = store.getState().music;
     return state.ended;
   }
@@ -58,17 +55,16 @@ export default class Song extends Component<any, SongState>{
       Taro.createSelectorQuery().select('.lyric').boundingClientRect().exec(([rec]) => {
         if (rec) {
           this.setState({
-            lyricHeight: rec.height / 3
+            lyricHeight: Math.floor(rec.height / 3)
           })
         }
       });
     }, 20);
   }
-  initPlayer(song) {
-    Song.backgroundAudioManager.title = song.name;
-    Song.backgroundAudioManager.epname = song.name;
-    Song.backgroundAudioManager.singer = song.ar.map(ar => ar.name).join('/');
-    Song.backgroundAudioManager.coverImgUrl = song.al.picUrl;
+  componentWillUnmount(){
+    this.stopDiscAnimation();    
+  }
+  initEvent() {
     Song.backgroundAudioManager.onPause(() => {
       this.togglePlay(false);
     });
@@ -78,17 +74,27 @@ export default class Song extends Component<any, SongState>{
     Song.backgroundAudioManager.onPlay(() => {
       this.togglePlay(true);
     });
-    Song.backgroundAudioManager.onEnded(()=>{
+    Song.backgroundAudioManager.onEnded(() => {
       store.dispatch(nextPlayingList());
-      if(!this.getIsEnded){
-        this.initPlayer(this.getCurrentSong);
+      if (!this.getIsEnded()) {
+        this.initPlayer(this.getCurrentSong());
         this.setState({
-          song:this.getCurrentSong()
+          song: this.getCurrentSong()
         })
-      }else{
+      } else {
         this.togglePlay(false);
       }
     })
+  }
+  initPlayer(song) {
+    this.getSongLyric(song);
+    this.getSimilarSongs(song);
+    this.getHotComments(song);
+    Song.backgroundAudioManager.stop();
+    Song.backgroundAudioManager.title = song.name;
+    Song.backgroundAudioManager.epname = song.name;
+    Song.backgroundAudioManager.singer = song.ar.map(ar => ar.name).join('/');
+    Song.backgroundAudioManager.coverImgUrl = `${song.al.picUrl}?param=500y500`;
     apiGetSongPlayUrl(song.id).then(url => {
       Song.backgroundAudioManager.src = url;
     }, err => {
@@ -99,22 +105,22 @@ export default class Song extends Component<any, SongState>{
       })
     })
   }
-  getSimilarSongs() {
-    apiGetSimilarSongs(this.state.song.id).then(res => {
+  getSimilarSongs(song) {
+    apiGetSimilarSongs(song.id).then(res => {
       this.setState({
         similarSongs: res.songs
       })
     })
   }
-  getHotComments() {
-    apiGetHotComments(this.state.song.id).then(res => {
+  getHotComments(song) {
+    apiGetHotComments(song.id).then(res => {
       this.setState({
         hotComments: res.hotComments
       })
     })
   }
-  getSongLyric() {
-    apiGetSongLyric(this.state.song.id).then(res => {
+  getSongLyric(song) {
+    apiGetSongLyric(song.id).then(res => {
       const lyricTxt = res.lrc.lyric;
       const reg = /\s*\[((\d+:)+\d{2}\.\d{1,3})\]\s*/;
       const lyricArr = lyricTxt.split('\n').filter(lyricLine => reg.test(lyricLine)).map(lyricLine => {
@@ -136,7 +142,8 @@ export default class Song extends Component<any, SongState>{
         }
       });
       this.setState({
-        lyrics: lyricArr
+        lyrics: lyricArr,
+        activeLyricIndex: 0
       })
     })
   }
@@ -156,16 +163,17 @@ export default class Song extends Component<any, SongState>{
       isPlaying: flag
     })
   }
-  playNew(song){
+  playNew(song) {
     store.dispatch(addPlayingList(song));
     const newSong = this.getCurrentSong();
     this.setState({
-      song:newSong
+      song: newSong
     });
     this.initPlayer(newSong);
   }
   // disc 动画切换
   discAnimation() {
+    window.cancelAnimationFrame(this.timer)
     this.timer = window.requestAnimationFrame(() => {
       const { rotateDeg, activeLyricIndex, lyrics } = this.state;
       const current = Math.round(Song.backgroundAudioManager.currentTime * 1000);
@@ -205,7 +213,7 @@ export default class Song extends Component<any, SongState>{
         <div className={"needle bg-fit" + (isPlaying ? ' playing' : '')}></div>
         <div className={"play bg-fit" + (isPlaying ? ' playing' : '')} onClick={() => this.togglePlay()}></div>
         <div className="disc bg-fit" style={discRotateStyle}>
-          <div className="song-img bg-fit" style={{ backgroundImage: `url(${song.al.picUrl})` }}>
+          <div className="song-img bg-fit" style={{ backgroundImage: `url(${song.al.picUrl}?param=300y300)` }}>
           </div>
         </div>
       </div>
@@ -215,11 +223,9 @@ export default class Song extends Component<any, SongState>{
   // 歌词
   renderLyric() {
     const { lyrics, activeLyricIndex, lyricHeight } = this.state;
-    let lyricScrollStyle: any = null;
+    let lyricScrollStyle = { marginTop: 0 };
     if (activeLyricIndex > 1) {
-      lyricScrollStyle = {
-        marginTop: - (activeLyricIndex - 1) * lyricHeight
-      }
+      lyricScrollStyle.marginTop = -(activeLyricIndex - 1) * lyricHeight
     }
     return (
       <div className="lyric">
@@ -245,7 +251,7 @@ export default class Song extends Component<any, SongState>{
         <div className="similar">
           <div className="title-wrapper">
             <div className="title">喜欢这首歌的人也听</div>
-            <div className="play-all" onClick={()=>this.playNew(similarSongs)}>
+            <div className="play-all" onClick={() => this.playNew(similarSongs)}>
               <div className="icon bg-fit"></div>
               <div>一键收听</div>
             </div>
@@ -253,8 +259,8 @@ export default class Song extends Component<any, SongState>{
           <div className="similar-list">
             {similarSongs.map(song => {
               return (
-                <div className="song-item" key={song.id} onClick={()=>this.playNew(song)}>
-                  <img className='img' src={song.album.picUrl} alt="" />
+                <div className="song-item" key={song.id} onClick={() => this.playNew(song)}>
+                  <img className='img' src={`${song.album.picUrl}?param=50y50`} alt="" />
                   <div className="info">
                     <div className="name f-thide">{song.name}</div>
                     <div className="singer">
@@ -286,7 +292,7 @@ export default class Song extends Component<any, SongState>{
               return (
                 <div className="comment-item" key={comment.commentId}>
                   <div className="user">
-                    <img src={comment.user.avatarUrl} alt="" className="avatar" />
+                    <img src={`${comment.user.avatarUrl}?param=50y50`} alt="" className="avatar" />
                     <div className="info">
                       <div className="name">{comment.user.nickname}</div>
                       <div className="time">{comment.timeStr}</div>
@@ -310,7 +316,7 @@ export default class Song extends Component<any, SongState>{
     const { song } = this.state;
 
     // 页面背景
-    const bg = `center -3000px / 500% 9000px  no-repeat url(${song.al.picUrl + '?imageView&blur=40x20'})`;
+    const bg = `center -3000px / 500% 9000px  no-repeat url(${song.al.picUrl + '?imageView&blur=40x20&param=500y500'})`;
 
 
     return (

@@ -122,7 +122,7 @@ export default class Playlist extends Component<any, PlaylistState> {
     return (
       <div className="playlist">
         <div className="detail">
-          <div className="img bg-fit" style={{ backgroundImage: `url(${playlist.coverImgUrl})` }}>
+          <div className="img bg-fit" style={{ backgroundImage: `url(${playlist.coverImgUrl}?param=400y400)`}}>
             <div className="count">
               <div className="icon bg-fit"></div>
               <div className="num">{formatNum(playlist.playCount)}</div>
@@ -149,7 +149,7 @@ export default class Playlist extends Component<any, PlaylistState> {
     )
   }
   render() {
-    const bg = `center 0 / 100% 5000px no-repeat url(${this.state.playlist.coverImgUrl})`;
+    const bg = `center 0 / 100% 5000px no-repeat url(${this.state.playlist.coverImgUrl}?param=400y400)`;
     return (
       <div className='p-playlist' style={{ background: bg }}>
         <WXHeader title={title} background={bg} theme={"dark"} barHeight={(height) => {

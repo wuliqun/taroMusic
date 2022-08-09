@@ -2,7 +2,7 @@
   "miniprogramRoot": "./dist",
   "projectname": "taroMusic",
   "description": "MOCK NeteaseCloudMusic by taro",
-  "appid": "touristappid",
+  "appid": "wx162d4fb15b98e89e",
   "setting": {
     "urlCheck": true,
     "es6": false,

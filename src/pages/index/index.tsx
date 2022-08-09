@@ -46,14 +46,14 @@ export default class Index extends Component<any, IndexState> {
     
   }
   gotoPlaylist(playlist){
-    store.dispatch(setPlaylist({payload:playlist}));
+    store.dispatch(setPlaylist(playlist));
     Taro.navigateTo({
       url: `/pages/playlist/playlist?id=${playlist.id}`
     });
   }
   renderListItem(playlist) {
     const bgImg = {
-      backgroundImage: `url(${playlist.coverImgUrl})`
+      backgroundImage: `url(${playlist.coverImgUrl}?param=400y400)`
     }
     let songs: JSX.Element[] | null = null;
     if (playlist.tracks) {
@@ -63,7 +63,6 @@ export default class Index extends Component<any, IndexState> {
     }
     return (<div className="list-item" key={playlist.id} onClick={()=>this.gotoPlaylist(playlist)}>
       <div className="img" style={bgImg}>
-        <div className="name">{playlist.name}</div>
         <div className="update">{playlist.updateFrequency}</div>
       </div>
       <div className="songs">
