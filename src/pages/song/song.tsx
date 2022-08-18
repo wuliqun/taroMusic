@@ -31,7 +31,7 @@ export default class Song extends Component<any, SongState>{
       song: song,
       id: Number(Taro.getCurrentInstance().router?.params.id) || song.id,
       pageHeight: windowHeight,
-      isPlaying: true,
+      isPlaying: false,
       rotateDeg: 0,
       similarSongs: [],
       hotComments: [],
@@ -223,9 +223,9 @@ export default class Song extends Component<any, SongState>{
   // 歌词
   renderLyric() {
     const { lyrics, activeLyricIndex, lyricHeight } = this.state;
-    let lyricScrollStyle = { marginTop: 0 };
+    let lyricScrollStyle = { transform: "translateY(0)" };
     if (activeLyricIndex > 1) {
-      lyricScrollStyle.marginTop = -(activeLyricIndex - 1) * lyricHeight
+      lyricScrollStyle.transform = `translateY(${-(activeLyricIndex - 1) * lyricHeight}px)`
     }
     return (
       <div className="lyric">

@@ -11,18 +11,18 @@ interface ApiConfig {
 const apiConfig:ApiConfig = {
   development: {
     [Taro.ENV_TYPE.WEB]:{      
-      apiUrl: "http://45.32.122.79:3000/"
+      apiUrl: "https://api.mu3c.xyz/"
     },
     default:{
-      apiUrl: "https://www.mu3c.xyz/api/"
+      apiUrl: "https://api.mu3c.xyz/"
     }
   },
   production: {
     [Taro.ENV_TYPE.WEB]:{
-      apiUrl: "http://45.32.122.79:3000/"
+      apiUrl: "https://api.mu3c.xyz/"
     },
     default:{
-      apiUrl: "https://www.mu3c.xyz/api/"
+      apiUrl: "https://api.mu3c.xyz/"
     }
   }
 };
